@@ -9,6 +9,9 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 # base user class that handles actual user creation, in tandem with the UserProfile class
 
+from django.conf import settings
+#retrieves settings from settings.py file
+
 
 # Create your models here.
 class UserProfileManager(BaseUserManager):
@@ -68,3 +71,18 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """Return string represetnation of user"""
         return self.email
+
+class ProfileFeedItem(models.Model):
+    """Profile Status Update"""
+    user_profile = models.ForeignKey(
+        # the first argument of a foreign key is the name of the model that is the remote model for this foreign key
+        # which model do we want to set a relaionship with for this user profile field? UserProfile
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE #deletes all user feed items when a profile is deleted
+    )
+    status_text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return self.status_text
